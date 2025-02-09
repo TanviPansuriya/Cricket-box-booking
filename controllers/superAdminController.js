@@ -52,7 +52,6 @@ const getAllAdmins = async (req, res) => {
     const admins = await Admin.find().select("-password"); 
     res.status(200).json({ admins });
   } catch (error) {
-    console.error("Get Admins Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
