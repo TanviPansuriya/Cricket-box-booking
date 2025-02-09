@@ -17,12 +17,6 @@ app.use('/api/superAdmin', superAdminRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 
-app.use("/",async(req,res)=>{
-    return res.json({
-        message:"welcome"
-    })
-});
-
 app.listen(port, () => {
     console.log(`Server is running at ${port} no.`);
 });
