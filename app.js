@@ -6,7 +6,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const path = require("path")
 
-require("dotenv").config();
+const env = require("dotenv").config();
 
 const app = express();
 app.use(express.json());
