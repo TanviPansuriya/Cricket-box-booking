@@ -16,7 +16,29 @@ const getTurfsByLocation = async (req, res) => {
     }
 
     res.status(200).json({ turfs });
-  } catch (error) { 
+  } catch (error) {
+    console.error("Error fetching turfs:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const searchTurfs = async (req, res) => {
+  try {
+    const { name, location } = req.query;
+
+    const turfs = await Turf.find({
+      $or: [
+        { name: { $regex: name, $options: 'i' } },
+        { location: { $regex: location, $options: 'i' } }
+      ]
+    });
+
+    if (turfs.length === 0) {
+      return res.status(404).json({ message: "No turfs found" });
+    }
+
+    res.status(200).json({ turfs });
+  } catch (error) {
     console.error("Error fetching turfs:", error);
     res.status(500).json({ message: "Server error" });
   }
@@ -25,14 +47,14 @@ const getTurfsByLocation = async (req, res) => {
 // Get all turfs for users
 const getAllTurfs = async (req, res) => {
   try {
-      const turfs = await Turf.find();
-      if (!turfs || turfs.length === 0) {
-          return res.status(404).json({ message: "No turfs found" });
-      }
-      res.status(200).json({ message: "Turfs fetched successfully", turfs });
+    const turfs = await Turf.find();
+    if (!turfs || turfs.length === 0) {
+      return res.status(404).json({ message: "No turfs found" });
+    }
+    res.status(200).json({ message: "Turfs fetched successfully", turfs });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Failed to fetch turfs" });
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch turfs" });
   }
 };
 
@@ -111,4 +133,4 @@ const createBooking = async (req, res) => {
   }
 };
 
-module.exports = { getTurfsByLocation, getAllTurfs,createBooking};
+module.exports = { getTurfsByLocation, getAllTurfs, searchTurfs, createBooking };

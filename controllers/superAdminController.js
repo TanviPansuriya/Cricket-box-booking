@@ -25,24 +25,24 @@ const register = async (req, res) => {
     }
 };
 
-// Super Admin Login
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
         const superAdmin = await SuperAdmin.findOne({ email });
-        if (!superAdmin) return res.status(404).json({ message: "Super Admin not found" });
+        if (!superAdmin) return res.status(400).json({ message: 'Invalid Credentials' });
 
         const isMatch = await bcrypt.compare(password, superAdmin.password);
-        if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+        if (!isMatch) return res.status(400).json({ message: 'Invalid Credentials' });
+        // console.log(process.env.JWT_SECRET);
 
-        const token = jwt.sign({ id: superAdmin._id }, "JWT_SECRET:", process.env.JWT_SECRET, {
-            expiresIn: "1h",
-        });
+        // const token = jwt.sign({ superAdmin: superAdmin._id }, process.env.JWT_SECRET, {
+        //     expiresIn: "1h",
+        // });
 
-        res.json({ message: "Login successful", token });
+        res.json({ message: "Login successful" });
+
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        res.status(400).json({ message: error.message });
     }
 };
 
@@ -89,4 +89,25 @@ const deleteAdmin = async (req, res) => {
     }
 };
 
-module.exports = { register, login, createAdmin,getAllAdmins,deleteAdmin};
+// Search Admin
+const searchAdmin=async(req,res)=>{
+        try {
+        const {name} = req.query;
+        if (!name) {
+            return res.status(400).json({ message: "Please provide an admin name to search." });
+        }
+        const admins = await Admin.find({
+               name: { $regex: name, $options: "i" } 
+        });
+
+        if (!admins.length) {
+            return res.status(404).json({ message: "No matching admins found." });
+        }
+
+        res.status(200).json({ admins });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to filter admins" });
+    }
+};
+
+module.exports = { register, login, createAdmin,getAllAdmins,deleteAdmin,searchAdmin};
