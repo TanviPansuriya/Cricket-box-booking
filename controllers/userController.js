@@ -18,7 +18,7 @@ const getTurfsByLocation = async (req, res) => {
     res.status(200).json({ turfs });
   } catch (error) {
     console.error("Error fetching turfs:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({message: error.message });
   }
 };
 
@@ -40,7 +40,7 @@ const searchTurfs = async (req, res) => {
     res.status(200).json({ turfs });
   } catch (error) {
     console.error("Error fetching turfs:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -129,7 +129,7 @@ const createBooking = async (req, res) => {
     });
   } catch (error) {
     // console.error("Error in booking:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message});
   }
 };
 

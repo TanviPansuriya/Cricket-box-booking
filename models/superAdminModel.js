@@ -3,21 +3,22 @@ const mongoose = require("mongoose");
 const SuperAdminSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
         type: String,
-        unique: true,
-        required: true
+        unique: [true, "email already exists"],
+        required: [true, "email is required"],
+        match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid email format"]
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: [6, "Password must be at least 6 characters"]
     },
 }, {
     timestamps: true
 });
-    
 
 const SuperAdmin = mongoose.model('SuperAdmin', SuperAdminSchema);
 module.exports = SuperAdmin;

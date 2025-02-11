@@ -12,11 +12,10 @@ const AdminSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
 }, {
     timestamps: true
 });
 const Admin = mongoose.model('Admin', AdminSchema);
 module.exports = Admin;
-

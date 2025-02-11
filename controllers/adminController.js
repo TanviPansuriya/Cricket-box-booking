@@ -28,6 +28,8 @@ const login = async (req, res) => {
 
 // Add turfs
 const addTurf = async (req, res) => {
+    // console.log('Request Body:', req.body);
+    // console.log('File:', req.file);
     const { name, location, price, time } = req.body;
     const image = req.file ? req.file.path.replace(/\\/g, "/") : "";
 
@@ -59,7 +61,7 @@ const getAllTurfsByAdmin = async (req, res) => {
         }
         res.status(200).json({ turfs: turfs });
     } catch (error) {
-        res.status(500).json({ error });
+        res.status(500).json({ message: error.message });
         console.log(error);
     }
 };
@@ -81,9 +83,10 @@ const getTurfById = async (req, res) => {
     }
 };
 
+// Search turf
 const searchTurfs = async (req, res) => {
     try {
-        const { turfName, name } = req.query; 
+        const { turfName, name } = req.query;
         let query = {};
 
         if (turfName) {
@@ -95,13 +98,13 @@ const searchTurfs = async (req, res) => {
             if (!admin) {
                 return res.status(404).json({ message: "Admin not found" });
             }
-            query.admin = admin._id; 
+            query.admin = admin._id;
         }
 
         const turfs = await Turf.find(query).populate("admin", "name email");
 
         if (!turfs.length) {
-            return res.status(404).json({ message: "No turfs found matching the criteria." });
+            return res.status(404).json({ message: "No turfs found for this admin." });
         }
 
         res.status(200).json({ turfs });
@@ -162,7 +165,7 @@ const getAllBookings = async (req, res) => {
     }
 };
 
-// Pagination for turf
+// Pagination for display turfs
 const documents = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -178,11 +181,38 @@ const documents = async (req, res) => {
             totalPages: Math.ceil(totalTurfs / limit),
             turfs
         });
-        
-    } catch (err) {
-        console.log(err)
-      res.status(500).send('Error fetching documents');
-    }
-  };
 
-module.exports = { login, addTurf, searchTurfs, getAllTurfsByAdmin, getTurfById, updateTurf, deleteTurf, getAllBookings,documents};
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Error fetching documents');
+    }
+};
+
+// count total turfs
+const totalTurfs = async (req, res) => {
+    try {
+        const adminId = req.admin.admin;
+        const totalTurfs = await Turf.countDocuments({ admin: adminId });
+        res.status(200).json({ totalTurfs });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch" });
+    }
+};
+
+// count total bookings
+const totalBookings = async (req, res) => {
+    try {
+        const adminId = req.admin.admin;
+        const totalBookings = await Booking.countDocuments({ turfId: { $in: await Turf.find({ admin: adminId })} });
+
+        res.status(200).json({  totalBookings });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch" });
+    }
+};
+
+module.exports = {
+    login, addTurf, searchTurfs, getAllTurfsByAdmin, getTurfById,
+    updateTurf, deleteTurf, getAllBookings, documents, totalTurfs,
+    totalBookings
+};

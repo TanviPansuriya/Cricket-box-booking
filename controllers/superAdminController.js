@@ -21,7 +21,7 @@ const register = async (req, res) => {
 
         res.status(201).json({ message: "Admin registered successfully", superAdmin: newSuperAdmin });
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -48,12 +48,12 @@ const login = async (req, res) => {
 
 // Get all Admins
 const getAllAdmins = async (req, res) => {
-  try {
-    const admins = await Admin.find().select("-password"); 
-    res.status(200).json({ admins });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+    try {
+        const admins = await Admin.find().select("-password");
+        res.status(200).json({ admins });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 // Create Admin (Super Admin)
@@ -71,7 +71,7 @@ const createAdmin = async (req, res) => {
 
         res.status(201).json({ message: "Admin created successfully", Admin: newAdmin });
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -82,22 +82,22 @@ const deleteAdmin = async (req, res) => {
         const deletedAdmin = await Admin.findByIdAndDelete(adminId);
         if (!deletedAdmin) return res.status(404).json({ message: 'Admin not found' });
 
-        res.status(200).json({message: 'Admin removed successfully' });
+        res.status(200).json({ message: 'Admin removed successfully' });
     } catch (error) {
         console.log(error)
-        res.status(500).json({  message: 'Error removing admin' });
+        res.status(500).json({ message: 'Error removing admin' });
     }
 };
 
 // Search Admin
-const searchAdmin=async(req,res)=>{
-        try {
-        const {name} = req.query;
+const searchAdmin = async (req, res) => {
+    try {
+        const { name } = req.query;
         if (!name) {
             return res.status(400).json({ message: "Please provide an admin name to search." });
         }
         const admins = await Admin.find({
-               name: { $regex: name, $options: "i" } 
+            name: { $regex: name, $options: "i" }
         });
 
         if (!admins.length) {
@@ -110,4 +110,4 @@ const searchAdmin=async(req,res)=>{
     }
 };
 
-module.exports = { register, login, createAdmin,getAllAdmins,deleteAdmin,searchAdmin};
+module.exports = { register, login, createAdmin, getAllAdmins, deleteAdmin, searchAdmin };
