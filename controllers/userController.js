@@ -1,5 +1,6 @@
 const Turf = require("../models/turfModel");
 const Booking = require("../models/bookingModel");
+const Contact = require("../models/contactModel");
 
 // Get turfs by location
 const getTurfsByLocation = async (req, res) => {
@@ -18,10 +19,11 @@ const getTurfsByLocation = async (req, res) => {
     res.status(200).json({ turfs });
   } catch (error) {
     console.error("Error fetching turfs:", error);
-    res.status(500).json({message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
+// Search turfs based on name and location
 const searchTurfs = async (req, res) => {
   try {
     const { name, location } = req.query;
@@ -129,8 +131,19 @@ const createBooking = async (req, res) => {
     });
   } catch (error) {
     // console.error("Error in booking:", error);
-    res.status(500).json({ message: error.message});
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { getTurfsByLocation, getAllTurfs, searchTurfs, createBooking };
+// Contact form
+const addContact = async (req, res) => {
+  try {
+    const contact = new Contact(req.body);
+    await contact.save();
+    res.status(200).json({ message: 'Message sent successfully!',contact });
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to send message', message: error.message });
+  }
+};
+
+module.exports = { getTurfsByLocation, getAllTurfs, searchTurfs, createBooking,addContact };

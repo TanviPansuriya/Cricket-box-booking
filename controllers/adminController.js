@@ -118,12 +118,16 @@ const searchTurfs = async (req, res) => {
 const updateTurf = async (req, res) => {
     const _id = req.params.id;
     try {
-        const turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
+        let turf=await Turf.findById(_id);
         if (!turf) {
             return res.status(404).json({ error: 'Turf not found' });
         }
-        console.log(turf)
-        res.status(200).json({ message: 'Turf updated successfully', turf });
+
+        if (req.file) {
+            req.body.image = req.file.path.replace(/\\/g, "/");
+        }
+        turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
+                res.status(200).json({ message: 'Turf updated successfully', turf });
     } catch (error) {
         // console.log(error)
         res.status(400).json({ error: 'Error updating turf', details: error.message });

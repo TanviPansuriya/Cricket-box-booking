@@ -11,7 +11,9 @@ router.post('/add-turf', auth, upload.single("image"), addTurf);
 router.get('/my-turfs', auth, getAllTurfsByAdmin);
 router.get('/turfs/:id', auth, getTurfById);
 router.get('/searchTurfs', auth, searchTurfs);
-router.patch('/:id', auth, updateTurf);
+// router.patch('/:id', auth, updateTurf);
+router.put('/update-turf/:id',auth, upload.single('image'), updateTurf);
+
 router.delete('/:id', auth, deleteTurf);
 router.get('/get-bookings', auth, getAllBookings);
 router.get('/turfs', auth, documents);

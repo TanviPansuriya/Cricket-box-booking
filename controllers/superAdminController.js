@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const SuperAdmin = require("../models/superAdminModel");
 const Admin = require("../models/adminModel");
+const Contact=require("../models/contactModel");
 
 const router = express.Router();
 
@@ -85,7 +86,7 @@ const deleteAdmin = async (req, res) => {
         res.status(200).json({ message: 'Admin removed successfully' });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Error removing admin' });
+        res.status(500).json({ message: 'Error removing admin',message: error.message });
     }
 };
 
@@ -106,8 +107,19 @@ const searchAdmin = async (req, res) => {
 
         res.status(200).json({ admins });
     } catch (error) {
-        res.status(500).json({ error: "Failed to filter admins" });
+        res.status(500).json({ error: "Failed to filter admins",message: error.message });
     }
 };
 
-module.exports = { register, login, createAdmin, getAllAdmins, deleteAdmin, searchAdmin };
+// Get all contact details
+const getContact = async (req, res) => {
+    try {
+        const contacts = await Contact.find();
+        res.status(200).json(contacts);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to fetch messages', message: error.message });
+    }
+};
+
+
+module.exports = { register, login, createAdmin, getAllAdmins, deleteAdmin, searchAdmin, getContact };
