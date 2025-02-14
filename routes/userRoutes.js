@@ -8,6 +8,6 @@ router.get("/turfs", getTurfsByLocation);
 router.get("/getallturfs", getAllTurfs);
 router.get("/searchTurfs", searchTurfs);
 router.post("/booking", createBooking);
-router.post("/conatct", addContact);
+router.post("/contact", addContact);
 
 module.exports = router;
