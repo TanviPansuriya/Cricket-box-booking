@@ -147,3 +147,59 @@ const addContact = async (req, res) => {
 };
 
 module.exports = { getTurfsByLocation, getAllTurfs, searchTurfs, createBooking,addContact };
+
+
+// const bookTurf = async (req, res) => {
+//     try {
+//         const { turfId, userDetails, bookingDetails } = req.body;
+
+//         // Step 1: Find the turf and get the admin ID
+//         const turf = await Turf.findById(turfId);
+//         if (!turf) {
+//             return res.status(404).json({ message: "Turf not found" });
+//         }
+
+//         // Step 2: Create a new booking with the turf's admin ID
+//         const newBooking = new Booking({
+//             turfId,
+//             adminId: turf.admin, // Linking booking to the admin
+//             userDetails,
+//             bookingDetails,
+//             status: "Pending"
+//         });
+
+//         await newBooking.save();
+
+//         res.status(201).json({ message: "Booking successful!", booking: newBooking });
+//     } catch (error) {
+//         console.error("Error booking turf:", error);
+//         res.status(500).json({ error: "Failed to book turf" });
+//     }
+// };
+
+// {
+//   "bookings": [
+//       {
+//           "_id": "65a0f6b9d3e74a5c8e0c5678",
+//           "turfId": {
+//               "name": "Elite Sports Arena",
+//               "location": { "lat": 19.076, "lng": 72.8777 }
+//           },
+//           "userDetails": {
+//               "name": "John Doe",
+//               "phone": "9876543210",
+//               "email": "john@example.com"
+//           },
+//           "bookingDetails": {
+//               "date": "2025-02-18",
+//               "timeSlot": {
+//                   "startTime": "10:00 AM",
+//                   "endTime": "11:00 AM",
+//                   "price": 500
+//               }
+//           },
+//           "status": "Pending",
+//           "createdAt": "2025-02-17T12:00:00.000Z"
+//       }
+//   ]
+// }

@@ -121,5 +121,4 @@ const getContact = async (req, res) => {
     }
 };
 
-
 module.exports = { register, login, createAdmin, getAllAdmins, deleteAdmin, searchAdmin, getContact };

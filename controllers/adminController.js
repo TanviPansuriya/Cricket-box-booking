@@ -5,7 +5,7 @@ const Turf = require("../models/turfModel");
 const Booking = require("../models/bookingModel");
 
 // Login 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const admin = await Admin.findOne({ email });
@@ -27,32 +27,56 @@ const login = async (req, res) => {
 };
 
 // Add turfs
-const addTurf = async (req, res) => {
-    // console.log('Request Body:', req.body);
-    // console.log('File:', req.file);
-    const { name, location, price, time } = req.body;
-    const image = req.file ? req.file.path.replace(/\\/g, "/") : "";
+// const addTurf = async (req, res) => {
+//     // console.log('Request Body:', req.body);
+//     // console.log('File:', req.file);
+//     const { name, location, price, time } = req.body;
+//     const image = req.file ? req.file.path.replace(/\\/g, "/") : "";
 
+//     try {
+//         const newTurf = new Turf({
+//             name,
+//             location,
+//             price,
+//             time,
+//             admin: req.admin.admin,
+//             image
+//         });
+//         await newTurf.save();
+
+//         res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ error: 'Failed to add turf' });
+//     }
+// };
+
+// Add turfs
+exports.addTurf = async (req, res) => {
+    const { name, location, googlemapLink, address1, address2,
+        city, landmark, zipcode, contactDetails, timeSlot } = req.body;
+
+    // const image = req.file ? req.file.path.replace(/\\/g, "/") : [];
+    const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
     try {
         const newTurf = new Turf({
-            name,
-            location,
-            price,
-            time,
+            name, location, googlemapLink, address1, address2,
+            city, landmark, zipcode, contactDetails, timeSlot,
             admin: req.admin.admin,
-            image
+            images
         });
         await newTurf.save();
 
         res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: 'Failed to add turf' });
+        res.status(500).json({ message: error.message });
     }
 };
 
+
 // get turf
-const getAllTurfsByAdmin = async (req, res) => {
+exports.getAllTurfsByAdmin = async (req, res) => {
     try {
         // console.log('Admin ID:', req.admin   );
         const turfs = await Turf.find({ admin: req.admin.admin })
@@ -67,7 +91,7 @@ const getAllTurfsByAdmin = async (req, res) => {
 };
 
 // get turf by id
-const getTurfById = async (req, res) => {
+exports.getTurfById = async (req, res) => {
 
     try {
         const _id = req.params.id;
@@ -84,7 +108,7 @@ const getTurfById = async (req, res) => {
 };
 
 // Search turf
-const searchTurfs = async (req, res) => {
+exports.searchTurfs = async (req, res) => {
     try {
         const { turfName, name } = req.query;
         let query = {};
@@ -115,10 +139,10 @@ const searchTurfs = async (req, res) => {
 };
 
 // Update a turf
-const updateTurf = async (req, res) => {
+exports.updateTurf = async (req, res) => {
     const _id = req.params.id;
     try {
-        let turf=await Turf.findById(_id);
+        let turf = await Turf.findById(_id);
         if (!turf) {
             return res.status(404).json({ error: 'Turf not found' });
         }
@@ -127,7 +151,7 @@ const updateTurf = async (req, res) => {
             req.body.image = req.file.path.replace(/\\/g, "/");
         }
         turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
-                res.status(200).json({ message: 'Turf updated successfully', turf });
+        res.status(200).json({ message: 'Turf updated successfully', turf });
     } catch (error) {
         // console.log(error)
         res.status(400).json({ error: 'Error updating turf', details: error.message });
@@ -135,7 +159,7 @@ const updateTurf = async (req, res) => {
 };
 
 // Remove a turf
-const deleteTurf = async (req, res) => {
+exports.deleteTurf = async (req, res) => {
     const { id } = req.params;
     try {
         const turf = await Turf.findByIdAndDelete(id);
@@ -149,7 +173,7 @@ const deleteTurf = async (req, res) => {
 };
 
 // Get all Bookings
-const getAllBookings = async (req, res) => {
+exports.getAllBookings = async (req, res) => {
     try {
         const turfs = await Turf.find({ admin: req.admin.admin });
         if (!turfs.length) {
@@ -170,7 +194,7 @@ const getAllBookings = async (req, res) => {
 };
 
 // Pagination for display turfs
-const documents = async (req, res) => {
+exports.documents = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     try {
@@ -193,7 +217,7 @@ const documents = async (req, res) => {
 };
 
 // count total turfs
-const totalTurfs = async (req, res) => {
+exports.totalTurfs = async (req, res) => {
     try {
         const adminId = req.admin.admin;
         const totalTurfs = await Turf.countDocuments({ admin: adminId });
@@ -204,19 +228,36 @@ const totalTurfs = async (req, res) => {
 };
 
 // count total bookings
-const totalBookings = async (req, res) => {
+exports.totalBookings = async (req, res) => {
     try {
         const adminId = req.admin.admin;
-        const totalBookings = await Booking.countDocuments({ turfId: { $in: await Turf.find({ admin: adminId })} });
+        const totalBookings = await Booking.countDocuments({ turfId: { $in: await Turf.find({ admin: adminId }) } });
 
-        res.status(200).json({  totalBookings });
+        res.status(200).json({ totalBookings });
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch" });
     }
 };
 
-module.exports = {
-    login, addTurf, searchTurfs, getAllTurfsByAdmin, getTurfById,
-    updateTurf, deleteTurf, getAllBookings, documents, totalTurfs,
-    totalBookings
-};
+
+
+
+// const getAdminBookings = async (req, res) => {
+//     try {
+//         const adminId = req.admin.admin;
+
+//         const bookings = await Booking.find({ adminId })
+//             .populate("turfId", "name location")
+//             .sort({ createdAt: -1 }); // Show latest bookings first
+
+//         if (!bookings.length) {
+//             return res.status(404).json({ message: "No bookings found for this admin." });
+//         }
+
+//         res.status(200).json({ bookings });
+//     } catch (error) {
+//         console.error("Error fetching bookings:", error);
+//         res.status(500).json({ error: "Failed to retrieve bookings" });
+//     }
+// };
+

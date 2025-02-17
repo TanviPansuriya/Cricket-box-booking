@@ -14,3 +14,23 @@ router.get('/search-admin', searchAdmin);
 router.get('/contacts', getContact);
 
 module.exports = router;
+
+
+// const express = require("express");
+// const {
+//   getAllBookings,
+//   getBookingById,
+//   createBooking,
+//   updateBookingStatus,
+//   deleteBooking,
+// } = require("../controllers/bookingController");
+
+// const router = express.Router();
+
+// router.get("/", getAllBookings);            // Get all bookings
+// router.get("/:id", getBookingById);         // Get a single booking by ID
+// router.post("/", createBooking);            // Create a new booking
+// router.put("/:id/status", updateBookingStatus);  // Update booking status
+// router.delete("/:id", deleteBooking);       // Delete a booking
+
+// module.exports = router;
