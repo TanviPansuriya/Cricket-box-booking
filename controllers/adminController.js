@@ -53,14 +53,14 @@ exports.login = async (req, res) => {
 
 // Add turfs
 exports.addTurf = async (req, res) => {
-    const { name, location, googlemapLink, address1, address2,
+    const { name, location, address1, address2,
         city, landmark, zipcode, contactDetails, timeSlot } = req.body;
 
     // const image = req.file ? req.file.path.replace(/\\/g, "/") : [];
     const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
     try {
         const newTurf = new Turf({
-            name, location, googlemapLink, address1, address2,
+            name, location, address1, address2,
             city, landmark, zipcode, contactDetails, timeSlot,
             admin: req.admin.admin,
             images

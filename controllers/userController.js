@@ -61,8 +61,83 @@ const getAllTurfs = async (req, res) => {
 };
 
 // Booking
+// const createBooking = async (req, res) => {
+//   const { turfId, userPhone, userEmail, slot, date } = req.body;
+
+//   try {
+//     const turf = await Turf.findById(turfId);
+//     if (!turf) return res.status(404).json({ message: "Turf not found" });
+
+//     const existingUserBooking = await Booking.findOne({
+//       turfId,
+//       userPhone,
+//       userEmail,
+//       slot,
+//       date
+//     });
+
+//     if (!turf.time.includes(slot)) {
+//       return res.status(400).json({ message: "Selected slot is not available." });
+//     }
+
+//     const existingBooking = await Booking.findOne({ turfId, slot, date });
+//     if (existingBooking) {
+
+//       const bookedBookings = await Booking.find({ turfId, date });
+//       const bookedSlots = bookedBookings.map(booking => booking.slot);
+//       const availableSlots = turf.time.filter(slot => !bookedSlots.includes(slot));
+
+//       if (existingUserBooking) {
+//         return res.status(400).json({
+//           message: "You have already booked this turf for the selected date and time.",
+//           availableSlots
+//         });
+//       }
+//       if (availableSlots.length === 0) {
+//         return res.status(400).json({
+//           message: "No available turfs for this day.",
+//         });
+//       }
+
+//       return res.status(400).json({
+//         message: "Selected slot is already booked.",
+//         availableSlots,
+
+//       });
+//     }
+//     const allBookingsForDate = await Booking.find({ date });
+//     const allBookedSlots = allBookingsForDate.map(booking => booking.slot);
+
+//     const availableTurfSlots = turf.time.filter(slot => !allBookedSlots.includes(slot));
+
+//     if (availableTurfSlots.length === 0) {
+//       return res.status(400).json({
+//         message: "No available turfs for this day.",
+//       });
+//     }
+
+//     const newBooking = new Booking({
+//       turfId,
+//       userPhone,
+//       userEmail,
+//       slot,
+//       date
+//     });
+//     await newBooking.save();
+
+//     res.status(201).json({
+//       message: "Booking successful. We will contact you soon.",
+//       booking: newBooking
+//     });
+//   } catch (error) {
+//     // console.error("Error in booking:", error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// Booking
 const createBooking = async (req, res) => {
-  const { turfId, userPhone, userEmail, slot, date } = req.body;
+  const { turfId,userDetails, bookingDetails } = req.body;
 
   try {
     const turf = await Turf.findById(turfId);
@@ -70,58 +145,54 @@ const createBooking = async (req, res) => {
 
     const existingUserBooking = await Booking.findOne({
       turfId,
-      userPhone,
-      userEmail,
-      slot,
-      date
+      userDetails,
+      bookingDetails
     });
 
-    if (!turf.time.includes(slot)) {
-      return res.status(400).json({ message: "Selected slot is not available." });
-    }
+    // if (!turf.time.includes(slot)) {
+    //   return res.status(400).json({ message: "Selected slot is not available." });
+    // }
 
-    const existingBooking = await Booking.findOne({ turfId, slot, date });
-    if (existingBooking) {
+    // const existingBooking = await Booking.findOne({ turfId, slot, date });
+    // if (existingBooking) {
 
-      const bookedBookings = await Booking.find({ turfId, date });
-      const bookedSlots = bookedBookings.map(booking => booking.slot);
-      const availableSlots = turf.time.filter(slot => !bookedSlots.includes(slot));
+    //   const bookedBookings = await Booking.find({ turfId, date });
+    //   const bookedSlots = bookedBookings.map(booking => booking.slot);
+    //   const availableSlots = turf.time.filter(slot => !bookedSlots.includes(slot));
 
-      if (existingUserBooking) {
-        return res.status(400).json({
-          message: "You have already booked this turf for the selected date and time.",
-          availableSlots
-        });
-      }
-      if (availableSlots.length === 0) {
-        return res.status(400).json({
-          message: "No available turfs for this day.",
-        });
-      }
+    //   if (existingUserBooking) {
+    //     return res.status(400).json({
+    //       message: "You have already booked this turf for the selected date and time.",
+    //       availableSlots
+    //     });
+    //   }
+    //   if (availableSlots.length === 0) {
+    //     return res.status(400).json({
+    //       message: "No available turfs for this day.",
+    //     });
+    //   }
 
-      return res.status(400).json({
-        message: "Selected slot is already booked.",
-        availableSlots,
+    //   return res.status(400).json({
+    //     message: "Selected slot is already booked.",
+    //     availableSlots,
 
-      });
-    }
-    const allBookingsForDate = await Booking.find({ date });
-    const allBookedSlots = allBookingsForDate.map(booking => booking.slot);
+    //   });
+    // }
+    // const allBookingsForDate = await Booking.find({ date });
+    // const allBookedSlots = allBookingsForDate.map(booking => booking.slot);
 
-    const availableTurfSlots = turf.time.filter(slot => !allBookedSlots.includes(slot));
+    // const availableTurfSlots = turf.time.filter(slot => !allBookedSlots.includes(slot));
 
-    if (availableTurfSlots.length === 0) {
-      return res.status(400).json({
-        message: "No available turfs for this day.",
-      });
-    }
+    // if (availableTurfSlots.length === 0) {
+    //   return res.status(400).json({
+    //     message: "No available turfs for this day.",
+    //   });
+    // }
 
     const newBooking = new Booking({
       turfId,
-      userPhone,
-      userEmail,
-      slot,
-      date
+      userDetails,
+      bookingDetails
     });
     await newBooking.save();
 

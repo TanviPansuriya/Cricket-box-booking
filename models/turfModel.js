@@ -41,10 +41,6 @@ const turfSchema = new mongoose.Schema({
         lat: { type: String, required: true },
         lng: { type: String, required: [true, "Location is required"] }
     },
-    googlemapLink: {
-        type: String,
-        required: [true, "Link is required"]
-    },
     address1: {
         type: String,
         required: [true, "Address is required"]
