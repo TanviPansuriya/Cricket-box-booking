@@ -3,14 +3,14 @@ const Booking = require("../models/bookingModel");
 const Contact = require("../models/contactModel");
 
 // Get turfs by location
-const getTurfsByLocation = async (req, res) => {
-  const { location } = req.query;
+exports.getTurfsByLocation = async (req, res) => {
+  const { city } = req.query;
 
-  if (!location) {
+  if (!city) {
     return res.status(400).json({ message: "Location required" });
   }
   try {
-    const turfs = await Turf.find({ location: { $regex: location, $options: 'i' } });
+    const turfs = await Turf.find({ city: { $regex: city, $options: 'i' } });
 
     if (turfs.length === 0) {
       return res.status(404).json({ message: "No turfs found in this location" });
@@ -24,16 +24,17 @@ const getTurfsByLocation = async (req, res) => {
 };
 
 // Search turfs based on name and location
-const searchTurfs = async (req, res) => {
+exports.searchTurfs = async (req, res) => {
   try {
-    const { name, location } = req.query;
+    const { name } = req.query;
 
     const turfs = await Turf.find({
-      $or: [
-        { name: { $regex: name, $options: 'i' } },
-        { location: { $regex: location, $options: 'i' } }
-      ]
-    });
+      // $or: [
+      name: { $regex: name, $options: 'i' }
+    },
+      // { city: { $regex: city, $options: 'i' } }
+      // ]
+    );
 
     if (turfs.length === 0) {
       return res.status(404).json({ message: "No turfs found" });
@@ -47,7 +48,7 @@ const searchTurfs = async (req, res) => {
 };
 
 // Get all turfs for users
-const getAllTurfs = async (req, res) => {
+exports.getAllTurfs = async (req, res) => {
   try {
     const turfs = await Turf.find();
     if (!turfs || turfs.length === 0) {
@@ -60,7 +61,7 @@ const getAllTurfs = async (req, res) => {
   }
 };
 
-// Booking
+// old Booking
 // const createBooking = async (req, res) => {
 //   const { turfId, userPhone, userEmail, slot, date } = req.body;
 
@@ -135,142 +136,193 @@ const getAllTurfs = async (req, res) => {
 //   }
 // };
 
-// Booking
-const createBooking = async (req, res) => {
-  const { turfId,userDetails, bookingDetails } = req.body;
+// ----------------------------------
+// const BASE_PRICE = 500;
+// const DISCOUNT_PER_HOUR = 50;
 
-  try {
-    const turf = await Turf.findById(turfId);
-    if (!turf) return res.status(404).json({ message: "Turf not found" });
+// Check if time slots overlap
+// const isTimeSlotAvailable = (existingBookings, startTime, endTime) => {
+//   return !existingBookings.some(booking => {
+//     const existingStart = booking.bookingDetails.timeSlot.startTime;
+//     const existingEnd = booking.bookingDetails.timeSlot.endTime;
+//     return (
+//       (startTime >= existingStart && startTime < existingEnd) ||
+//       (endTime > existingStart && endTime <= existingEnd)
+//     );
+//   });
+// };
 
-    const existingUserBooking = await Booking.findOne({
-      turfId,
-      userDetails,
-      bookingDetails
-    });
+// Calculate price dynamically based on duration
+// const calculatePrice = (duration) => {
+//   let totalPrice = BASE_PRICE;
+//   for (let i = 1; i < duration; i++) {
+//     totalPrice += BASE_PRICE - (i * DISCOUNT_PER_HOUR);
+//   }
+//   return totalPrice;
+// };
 
-    // if (!turf.time.includes(slot)) {
-    //   return res.status(400).json({ message: "Selected slot is not available." });
-    // }
+// // POST - Create Booking
+// exports.createBooking = async (req, res) => {
+//   try {
+//     const { turfId, userDetails, bookingDetails } = req.body;
 
-    // const existingBooking = await Booking.findOne({ turfId, slot, date });
-    // if (existingBooking) {
+//     if (!turfId || !userDetails || !bookingDetails) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
 
-    //   const bookedBookings = await Booking.find({ turfId, date });
-    //   const bookedSlots = bookedBookings.map(booking => booking.slot);
-    //   const availableSlots = turf.time.filter(slot => !bookedSlots.includes(slot));
+//     const { date, timeSlot } = bookingDetails;
+//     const { startTime, endTime } = timeSlot;
 
-    //   if (existingUserBooking) {
-    //     return res.status(400).json({
-    //       message: "You have already booked this turf for the selected date and time.",
-    //       availableSlots
-    //     });
-    //   }
-    //   if (availableSlots.length === 0) {
-    //     return res.status(400).json({
-    //       message: "No available turfs for this day.",
-    //     });
-    //   }
+//     const timeFormat = /^([01]\d|2[0-3]):([0-5]\d)$/;
+//     if (!timeFormat.test(startTime) || !timeFormat.test(endTime)) {
+//       return res.status(400).json({ message: "Invalid time format (HH:MM required)" });
+//     }
 
-    //   return res.status(400).json({
-    //     message: "Selected slot is already booked.",
-    //     availableSlots,
+//     const start = parseInt(startTime.split(":")[0]);
+//     const end = parseInt(endTime.split(":")[0]);
+//     const duration = end - start;
 
-    //   });
-    // }
-    // const allBookingsForDate = await Booking.find({ date });
-    // const allBookedSlots = allBookingsForDate.map(booking => booking.slot);
+//     if (duration <= 0) {
+//       return res.status(400).json({ message: "Invalid time slot duration" });
+//     }
 
-    // const availableTurfSlots = turf.time.filter(slot => !allBookedSlots.includes(slot));
+//     // Fetch existing bookings for the turf on that date
+//     const existingBookings = await Booking.find({
+//       turfId,
+//       "bookingDetails.date": date,
+//     });
 
-    // if (availableTurfSlots.length === 0) {
-    //   return res.status(400).json({
-    //     message: "No available turfs for this day.",
-    //   });
-    // }
+//     // Check availability
+//     if (!isTimeSlotAvailable(existingBookings, startTime, endTime)) {
+//       return res.status(400).json({ message: "Selected time slot is not available" });
+//     }
 
-    const newBooking = new Booking({
-      turfId,
-      userDetails,
-      bookingDetails
-    });
-    await newBooking.save();
+//     // Calculate dynamic price
+//     const price = calculatePrice(duration);
 
-    res.status(201).json({
-      message: "Booking successful. We will contact you soon.",
-      booking: newBooking
-    });
-  } catch (error) {
-    // console.error("Error in booking:", error);
-    res.status(500).json({ message: error.message });
-  }
-};
+//     // Save booking
+//     const newBooking = new Booking({
+//       turfId,
+//       userDetails,
+//       bookingDetails,
+//       price,
+//     });
+
+//     await newBooking.save();
+
+//     res.status(201).json({ message: "Booking confirmed", price, booking: newBooking });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
 
 // Contact form
-const addContact = async (req, res) => {
+exports.addContact = async (req, res) => {
   try {
     const contact = new Contact(req.body);
     await contact.save();
-    res.status(200).json({ message: 'Message sent successfully!',contact });
+    res.status(200).json({ message: 'Message sent successfully!', contact });
   } catch (error) {
     res.status(400).json({ error: 'Failed to send message', message: error.message });
   }
 };
 
-module.exports = { getTurfsByLocation, getAllTurfs, searchTurfs, createBooking,addContact };
+// ---------------------------------
 
+// Helper function to convert time from AM/PM to 24-hour format
+const convertTo24HourFormat = (time) => {
+  const [timeString, period] = time.split(" ");
+  const [hours, minutes] = timeString.split(":");
 
-// const bookTurf = async (req, res) => {
-//     try {
-//         const { turfId, userDetails, bookingDetails } = req.body;
+  let hour = parseInt(hours);
 
-//         // Step 1: Find the turf and get the admin ID
-//         const turf = await Turf.findById(turfId);
-//         if (!turf) {
-//             return res.status(404).json({ message: "Turf not found" });
-//         }
+  if (period.toUpperCase() === "PM" && hour !== 12) hour += 12;
+  if (period.toUpperCase() === "AM" && hour === 12) hour = 0;
 
-//         // Step 2: Create a new booking with the turf's admin ID
-//         const newBooking = new Booking({
-//             turfId,
-//             adminId: turf.admin, // Linking booking to the admin
-//             userDetails,
-//             bookingDetails,
-//             status: "Pending"
-//         });
+  return hour;
+};
 
-//         await newBooking.save();
+// Function to calculate the total price based on the time slot selected
+const calculatePrice = (startTime, endTime, selectedTimeSlot) => {
+  const start = convertTo24HourFormat(startTime);
+  const end = convertTo24HourFormat(endTime);
 
-//         res.status(201).json({ message: "Booking successful!", booking: newBooking });
-//     } catch (error) {
-//         console.error("Error booking turf:", error);
-//         res.status(500).json({ error: "Failed to book turf" });
-//     }
-// };
+  const duration = end - start;
 
-// {
-//   "bookings": [
-//       {
-//           "_id": "65a0f6b9d3e74a5c8e0c5678",
-//           "turfId": {
-//               "name": "Elite Sports Arena",
-//               "location": { "lat": 19.076, "lng": 72.8777 }
-//           },
-//           "userDetails": {
-//               "name": "John Doe",
-//               "phone": "9876543210",
-//               "email": "john@example.com"
-//           },
-//           "bookingDetails": {
-//               "date": "2025-02-18",
-//               "timeSlot": {
-//                   "startTime": "10:00 AM",
-//                   "endTime": "11:00 AM",
-//                   "price": 500
-//               }
-//           },
-//           "status": "Pending",
-//           "createdAt": "2025-02-17T12:00:00.000Z"
-//       }
-//   ]
-// }
+  if (duration <= 0) {
+    throw new Error("Invalid time slot duration");
+  }
+
+  const pricePerHour = parseFloat(selectedTimeSlot.price);
+  const totalPrice = pricePerHour * duration;
+
+  return totalPrice;
+};
+
+// POST - Create Booking
+exports.createBooking = async (req, res) => {
+  try {
+    const { turfId, userDetails, bookingDetails } = req.body;
+
+    if (!turfId || !userDetails || !bookingDetails) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const { date, timeSlot } = bookingDetails;
+    const { startTime, endTime } = timeSlot;
+
+    try {
+      convertTo24HourFormat(startTime);
+      convertTo24HourFormat(endTime);
+    } catch (error) {
+      return res.status(400).json({ message: `Invalid time format: ${error.message}` });
+    }
+
+    const turf = await Turf.findById(turfId);
+
+    const selectedTimeSlot = turf.timeSlots.find(
+      slot => slot.startTime === startTime && slot.endTime === endTime
+    );
+
+    if (!selectedTimeSlot) {
+      return res.status(400).json({ message: "Selected time slot is not available" });
+    }
+
+    const existingBookings = await Booking.find({
+      turfId,
+      "bookingDetails.date": date,
+    });
+
+    const isSlotAvailable = !existingBookings.some(booking => {
+      const existingStartTime = booking.bookingDetails.timeSlot.startTime;
+      const existingEndTime = booking.bookingDetails.timeSlot.endTime;
+      return (
+        (startTime >= existingStartTime && startTime < existingEndTime) ||
+        (endTime > existingStartTime && endTime <= existingEndTime)
+      );
+    });
+
+    if (!isSlotAvailable) {
+      return res.status(400).json({ message: "Selected time slot is not available" });
+    }
+
+    const totalPrice = calculatePrice(startTime, endTime, selectedTimeSlot);
+
+    const newBooking = new Booking({
+      turfId,
+      userDetails,
+      bookingDetails,
+      price: totalPrice, 
+    });
+
+    await newBooking.save();
+
+    res.status(201).json({ message: "We will contact you soon", price: totalPrice, booking: newBooking });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};

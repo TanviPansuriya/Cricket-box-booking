@@ -8,7 +8,7 @@ const Contact=require("../models/contactModel");
 const router = express.Router();
 
 // Super Admin Registration
-const register = async (req, res) => {
+exports.register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
@@ -26,7 +26,7 @@ const register = async (req, res) => {
     }
 };
 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const superAdmin = await SuperAdmin.findOne({ email });
@@ -48,7 +48,7 @@ const login = async (req, res) => {
 };
 
 // Get all Admins
-const getAllAdmins = async (req, res) => {
+exports.getAllAdmins = async (req, res) => {
     try {
         const admins = await Admin.find().select("-password");
         res.status(200).json({ admins });
@@ -58,7 +58,7 @@ const getAllAdmins = async (req, res) => {
 };
 
 // Create Admin (Super Admin)
-const createAdmin = async (req, res) => {
+exports.createAdmin = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
@@ -77,7 +77,7 @@ const createAdmin = async (req, res) => {
 };
 
 // Delete Admin
-const deleteAdmin = async (req, res) => {
+exports.deleteAdmin = async (req, res) => {
     try {
         const adminId = req.params.id;
         const deletedAdmin = await Admin.findByIdAndDelete(adminId);
@@ -91,7 +91,7 @@ const deleteAdmin = async (req, res) => {
 };
 
 // Search Admin
-const searchAdmin = async (req, res) => {
+exports.searchAdmin = async (req, res) => {
     try {
         const { name } = req.query;
         if (!name) {
@@ -112,7 +112,7 @@ const searchAdmin = async (req, res) => {
 };
 
 // Get all contact details
-const getContact = async (req, res) => {
+exports.getContact = async (req, res) => {
     try {
         const contacts = await Contact.find();
         res.status(200).json(contacts);
@@ -121,4 +121,3 @@ const getContact = async (req, res) => {
     }
 };
 
-module.exports = { register, login, createAdmin, getAllAdmins, deleteAdmin, searchAdmin, getContact };

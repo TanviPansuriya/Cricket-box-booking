@@ -68,16 +68,15 @@ const turfSchema = new mongoose.Schema({
         },
         email: {
             type: String,
-            unique: [true, "email already exists"],
             required: [true, "email is required"],
             match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid email format"]
         },
     },
-    timeSlot: {
+    timeSlots: [{
         startTime: { type: String, required: [true, "Time is required"] },
         endTime: { type: String, required: [true, "Time is required"] },
         price: { type: String, required: [true, "Price is required"] },
-    },
+    }],
     admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
@@ -92,42 +91,3 @@ const turfSchema = new mongoose.Schema({
 
 const Turf = mongoose.model('Turf', turfSchema);
 module.exports = Turf;
-
-
-
-
-
-
-
-
-
-
-// const turfSchema = new mongoose.Schema(
-//   {
-//     name: { type: String, required: true },
-//     location: {
-//       lat: { type: Number, required: true },
-//       lng: { type: Number, required: true },
-//     },
-//     googleMapLink: { type: String, required: true },
-//     address1: { type: String, required: true },
-//     address2: { type: String, default: "" },
-//     city: { type: String, required: true },
-//     landmark: { type: String, default: "" },
-//     zipcode: { type: String, required: true },
-//     images: [{ type: String }], // List of image URLs
-//     contact: {
-//       phone: { type: String, required: true },
-//       email: { type: String, required: true },
-//     },
-//     timeSlots: [
-//       {
-//         startTime: { type: String, required: true },
-//         endTime: { type: String, required: true },
-//         price: { type: Number, required: true },
-//       },
-//     ],
-//   },
-//   { timestamps: true }
-// );
-
