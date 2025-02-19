@@ -23,11 +23,11 @@ const BookingSchema = new mongoose.Schema(
         },
         bookingDetails: {
             date: { type: String, required: true },
-            timeSlot: {
+            timeSlots: [{
                 startTime: { type: String, required: [true, "Time is required"] },
                 endTime: { type: String, required: [true, "Time is required"]},
                 price: { type: String,required: [true, "Price is required"] },
-            },
+            }],
         },
         status: {
             type: String,
