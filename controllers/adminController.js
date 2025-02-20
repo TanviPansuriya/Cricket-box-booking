@@ -56,7 +56,6 @@ exports.addTurf = async (req, res) => {
     const { name, location, address1, address2,
         city, landmark, zipcode, contactDetails, timeSlots } = req.body;
 
-    // const image = req.file ? req.file.path.replace(/\\/g, "/") : [];
     const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
     try {
         const newTurf = new Turf({
