@@ -362,3 +362,49 @@ exports.createBooking = async (req, res) => {
     }
 };
 
+// get available slots 
+exports.getAvailableSlots = async (req, res) => {
+  try {
+      const { turfId } = req.params;
+      const { date } = req.query; // Get the selected date from query params
+
+      if (!date) {
+          return res.status(400).json({ message: "Date is required" });
+      }
+
+      // Fetch Turf Details
+      const turf = await Turf.findById(turfId);
+      if (!turf) {
+          return res.status(404).json({ message: "Turf not found" });
+      }
+
+      // Fetch Bookings for the Selected Date
+      const bookings = await Booking.find({
+          turfId: turfId,
+          "bookingDetails.date": date
+      });
+
+      // Extract Already Booked Time Slots
+      const bookedSlots = bookings.flatMap(booking =>
+          booking.bookingDetails.timeSlots.map(slot => ({
+              startTime: slot.startTime,
+              endTime: slot.endTime
+          }))
+      );
+
+      // Filter Out Booked Time Slots
+      const availableSlots = turf.timeSlots.filter(turfSlot => {
+          return !bookedSlots.some(booked =>
+              booked.startTime === turfSlot.startTime && booked.endTime === turfSlot.endTime
+          );
+      });
+
+      res.status(200).json({
+          message: "Available slots fetched successfully",
+          availableSlots
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+  }
+};

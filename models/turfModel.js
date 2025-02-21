@@ -37,7 +37,7 @@ const turfSchema = new mongoose.Schema({
         },
         email: {
             type: String,
-            required: [true, "email is required"],
+            // required: [true, "email is required"],
             match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid email format"]
         },
     },

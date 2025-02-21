@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { login, addTurf, getAllTurfsByAdmin, getTurfById, searchTurfs, updateTurf,
-     deleteTurf, getAllBookings, documents,totalTurfs,totalBookings } = require("../controllers/adminController");
+     deleteTurf, getAllBookings, documents,totalTurfs,totalBookings ,getAllTimeSlots} = require("../controllers/adminController");
 const auth = require("../middleware/authMiddleware");
 const upload = require("../middleware/multer")
 
@@ -18,6 +18,9 @@ router.get('/get-bookings', auth, getAllBookings);
 router.get('/turfs', auth, documents);
 router.get('/totalTurfs', auth, totalTurfs);
 router.get('/totalBookings', auth, totalBookings);
+router.get('/getAllTimeSlots/:turfId', auth, getAllTimeSlots);
+
+
 
 module.exports = router;
 
