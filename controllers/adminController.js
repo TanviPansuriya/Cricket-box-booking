@@ -238,9 +238,7 @@ exports.totalBookings = async (req, res) => {
     }
 };
 
-
 // get all timeslots
-// router.get("/getAllTimeSlots/:turfId", async (req, res) => {
     exports.getAllTimeSlots = async (req, res) => {
 
     try {
@@ -262,3 +260,54 @@ exports.totalBookings = async (req, res) => {
 };
 
 
+
+// router.post("/addTimeSlots/:turfId", async (req, res) => {
+//     try {
+//         const { turfId } = req.params;
+//         const { timeSlots } = req.body; // Array of time slots
+
+//         if (!timeSlots || timeSlots.length === 0) {
+//             return res.status(400).json({ message: "Please provide at least one time slot" });
+//         }
+
+//         // Validate Turf exists
+//         const turf = await Turf.findById(turfId);
+//         if (!turf) {
+//             return res.status(404).json({ message: "Turf not found" });
+//         }
+
+//         // Append new time slots
+//         turf.timeSlots = [...turf.timeSlots, ...timeSlots];
+
+//         await turf.save();
+
+//         res.status(200).json({
+//             message: "Time slots added successfully",
+//             timeSlots: turf.timeSlots,
+//         });
+//     } catch (error) {
+//         console.error("Error adding time slots:", error);
+//         res.status(500).json({ message: "Server error" });
+//     }
+// });
+
+//  get timeslots
+// router.get("/getTimeSlots/:turfId", async (req, res) => {
+//     try {
+//         const { turfId } = req.params;
+
+//         const turf = await Turf.findById(turfId);
+
+//         if (!turf) {
+//             return res.status(404).json({ message: "Turf not found" });
+//         }
+
+//         res.status(200).json({
+//             message: "Time slots fetched successfully",
+//             timeSlots: turf.timeSlots,
+//         });
+//     } catch (error) {
+//         console.error("Error fetching time slots:", error);
+//         res.status(500).json({ message: "Server error" });
+//     }
+// });
