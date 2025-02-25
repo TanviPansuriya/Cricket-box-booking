@@ -33,7 +33,9 @@ const turfSchema = new mongoose.Schema({
     contactDetails: {
         phone: {
             type: String,
-            required: true
+            required: true,
+            unique:false,
+            match: [/^\d{10}$/, "Invalid phone number format. Must be exactly 10 digits"]
         },
         email: {
             type: String,
