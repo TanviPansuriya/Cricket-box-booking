@@ -5,7 +5,16 @@ const SuperAdmin = require("../models/superAdminModel");
 const Admin = require("../models/adminModel");
 const Contact=require("../models/contactModel");
 
-const router = express.Router();
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
 // Super Admin Registration
 exports.register = async (req, res) => {
@@ -70,7 +79,21 @@ exports.createAdmin = async (req, res) => {
         const newAdmin = new Admin({ name, email, password: hashedPassword });
         await newAdmin.save();
 
-        res.status(201).json({ message: "Admin created successfully", Admin: newAdmin });
+        // email sent
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Welcome to Admin Panel',
+            // text: 'Your admin account has been created successfully. You can now log in using your registered email.'
+            html: `<h3>Hello, ${name}!</h3>
+            <p>Your admin account has been created successfully.</p>
+            <p>You can now log in using your registered email.</p>`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent successfully to ${email}`);
+
+        res.status(201).json({ message: "Admin created successfully and email sent", Admin: newAdmin });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

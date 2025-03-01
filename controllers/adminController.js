@@ -73,7 +73,6 @@ exports.addTurf = async (req, res) => {
     }
 };
 
-
 // get turf
 exports.getAllTurfsByAdmin = async (req, res) => {
     try {
