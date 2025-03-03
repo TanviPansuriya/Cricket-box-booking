@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const SuperAdmin = require("../models/superAdminModel");
 const Admin = require("../models/adminModel");
-const Contact=require("../models/contactModel");
+const Contact = require("../models/contactModel");
 
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
@@ -84,10 +84,10 @@ exports.createAdmin = async (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Welcome to Admin Panel',
-            // text: 'Your admin account has been created successfully. You can now log in using your registered email.'
             html: `<h3>Hello, ${name}!</h3>
             <p>Your admin account has been created successfully.</p>
-            <p>You can now log in using your registered email.</p>`,
+            <p>You can now log in using your registered email.</p>
+            <p>Your account password :<b> ${password} </b></p>`,
         };
 
         await transporter.sendMail(mailOptions);
@@ -109,7 +109,7 @@ exports.deleteAdmin = async (req, res) => {
         res.status(200).json({ message: 'Admin removed successfully' });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Error removing admin',message: error.message });
+        res.status(500).json({ message: 'Error removing admin', message: error.message });
     }
 };
 
@@ -130,7 +130,7 @@ exports.searchAdmin = async (req, res) => {
 
         res.status(200).json({ admins });
     } catch (error) {
-        res.status(500).json({ error: "Failed to filter admins",message: error.message });
+        res.status(500).json({ error: "Failed to filter admins", message: error.message });
     }
 };
 
