@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require("../models/adminModel");
 const Turf = require("../models/turfModel");
 const Booking = require("../models/bookingModel");
+const cloudinary = require("../middleware/cloudinary");
 
 // Login 
 exports.login = async (req, res) => {
@@ -27,31 +28,6 @@ exports.login = async (req, res) => {
 };
 
 // Add turfs
-// const addTurf = async (req, res) => {
-//     // console.log('Request Body:', req.body);
-//     // console.log('File:', req.file);
-//     const { name, location, price, time } = req.body;
-//     const image = req.file ? req.file.path.replace(/\\/g, "/") : "";
-
-//     try {
-//         const newTurf = new Turf({
-//             name,
-//             location,
-//             price,
-//             time,
-//             admin: req.admin.admin,
-//             image
-//         });
-//         await newTurf.save();
-
-//         res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ error: 'Failed to add turf' });
-//     }
-// };
-
-// Add turfs
 exports.addTurf = async (req, res) => {
     const { name, location, address1, address2,
         city, landmark, zipcode, contactDetails, timeSlots } = req.body;
@@ -72,6 +48,33 @@ exports.addTurf = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Image upload on cloudinary
+// exports.addTurf = async (req, res) => {
+//     try {
+//         const images = [];
+
+//         if (req.files) {
+//             for (const file of req.files) {
+//                 const result = await cloudinary.uploader.upload(file.path);
+//                 images.push(result.secure_url);
+//             }
+//         }
+
+//         const newTurf = new Turf({
+//             ...req.body,
+//             admin: req.admin.admin,
+//             images
+//         });
+
+//         await newTurf.save();
+
+//         res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 // get turf
 exports.getAllTurfsByAdmin = async (req, res) => {
@@ -101,7 +104,7 @@ exports.getTurfById = async (req, res) => {
         res.status(200).json({ turf });
     } catch (error) {
         console.error("Error fetching turf:", error);
-        res.status(500).json({ error: "Failed to fetch turf" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -132,7 +135,7 @@ exports.searchTurfs = async (req, res) => {
         res.status(200).json({ turfs });
     } catch (error) {
         console.error("Error searching turfs:", error);
-        res.status(500).json({ error: "Failed to search turfs" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -145,16 +148,51 @@ exports.updateTurf = async (req, res) => {
             return res.status(404).json({ error: 'Turf not found' });
         }
 
-        if (req.file) {
-            req.body.image = req.file.path.replace(/\\/g, "/");
-        }
+        const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : turf.images;
+
+        req.body.images = images; 
+
+        // if (req.file) {
+        //     req.body.image = req.file.path.replace(/\\/g, "/");
+        // }
+
         turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
         res.status(200).json({ message: 'Turf updated successfully', turf });
     } catch (error) {
-        // console.log(error)
-        res.status(400).json({ error: 'Error updating turf', details: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
+
+// Update cloudinary images
+// exports.updateTurf = async (req, res) => {
+//     const _id = req.params.id;
+//     try {
+//         let turf = await Turf.findById(_id);
+//         if (!turf) {
+//             return res.status(404).json({ error: 'Turf not found' });
+//         }
+
+//         let images = turf.images;
+//         if (req.files) {
+//             images = [];
+//             for (const file of req.files) {
+//                 const result = await cloudinary.uploader.upload(file.path);
+//                 images.push(result.secure_url);
+//             }
+//         }
+
+//         const updatedTurf = await Turf.findByIdAndUpdate(
+//             _id,
+//             { images },
+//             { new: true }
+//         );
+
+//         res.status(200).json({ message: "Turf images updated successfully", images: updatedTurf.images });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 // Remove a turf
 exports.deleteTurf = async (req, res) => {
@@ -166,9 +204,31 @@ exports.deleteTurf = async (req, res) => {
         }
         res.status(200).json({ message: 'Turf removed successfully' });
     } catch (error) {
-        res.status(400).json({ error: 'Error removing turf', details: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
+
+// delete images on cloudinary
+// exports.deleteTurf = async (req, res) => {
+//     const _id = req.params.id;
+//     try {
+//         let turf = await Turf.findById(_id);
+//         if (!turf) {
+//             return res.status(404).json({ error: 'Turf not found' });
+//         }
+
+//         for (const imgUrl of turf.images) {
+//             const publicId = imgUrl.split("/").pop().split(".")[0];
+//             await cloudinary.uploader.destroy(publicId);
+//         }
+//         await Turf.findByIdAndDelete(_id);
+
+//         res.status(200).json({ message: "Turf and its images deleted successfully" });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 // Get all Bookings
 exports.getAllBookings = async (req, res) => {
@@ -187,7 +247,7 @@ exports.getAllBookings = async (req, res) => {
         res.status(200).json({ bookings });
     } catch (error) {
         console.error('Error fetching bookings:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -209,8 +269,7 @@ exports.documents = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
-        res.status(500).send('Error fetching documents');
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -221,7 +280,7 @@ exports.totalTurfs = async (req, res) => {
         const totalTurfs = await Turf.countDocuments({ admin: adminId });
         res.status(200).json({ totalTurfs });
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -233,12 +292,12 @@ exports.totalBookings = async (req, res) => {
 
         res.status(200).json({ totalBookings });
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch" });
+        res.status(500).json({ message: error.message });
     }
 };
 
 // get all timeslots
-    exports.getAllTimeSlots = async (req, res) => {
+exports.getAllTimeSlots = async (req, res) => {
 
     try {
         const { turfId } = req.params;
@@ -250,63 +309,10 @@ exports.totalBookings = async (req, res) => {
 
         res.status(200).json({
             message: "Time slots fetched successfully",
-            timeSlots: turf.timeSlots, 
+            timeSlots: turf.timeSlots,
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: error.message });
     }
 };
-
-
-
-// router.post("/addTimeSlots/:turfId", async (req, res) => {
-//     try {
-//         const { turfId } = req.params;
-//         const { timeSlots } = req.body; // Array of time slots
-
-//         if (!timeSlots || timeSlots.length === 0) {
-//             return res.status(400).json({ message: "Please provide at least one time slot" });
-//         }
-
-//         // Validate Turf exists
-//         const turf = await Turf.findById(turfId);
-//         if (!turf) {
-//             return res.status(404).json({ message: "Turf not found" });
-//         }
-
-//         // Append new time slots
-//         turf.timeSlots = [...turf.timeSlots, ...timeSlots];
-
-//         await turf.save();
-
-//         res.status(200).json({
-//             message: "Time slots added successfully",
-//             timeSlots: turf.timeSlots,
-//         });
-//     } catch (error) {
-//         console.error("Error adding time slots:", error);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// });
-
-//  get timeslots
-// router.get("/getTimeSlots/:turfId", async (req, res) => {
-//     try {
-//         const { turfId } = req.params;
-
-//         const turf = await Turf.findById(turfId);
-
-//         if (!turf) {
-//             return res.status(404).json({ message: "Turf not found" });
-//         }
-
-//         res.status(200).json({
-//             message: "Time slots fetched successfully",
-//             timeSlots: turf.timeSlots,
-//         });
-//     } catch (error) {
-//         console.error("Error fetching time slots:", error);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// });

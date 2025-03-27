@@ -7,11 +7,11 @@ const upload = require("../middleware/multer")
 
 router.post('/login', login);
 
-router.post('/add-turf', auth, upload.array("images",5), addTurf);
+router.post('/add-turf', auth, upload.array('images',5), addTurf);
 router.get('/my-turfs', auth, getAllTurfsByAdmin);
 router.get('/turfs/:id', auth, getTurfById);
 router.get('/searchTurfs', auth, searchTurfs);
-router.put('/update-turf/:id',auth, upload.single('image'), updateTurf);
+router.put('/update-turf/:id',auth, upload.array('images',5), updateTurf);
 
 router.delete('/:id', auth, deleteTurf);
 router.get('/get-bookings', auth, getAllBookings);

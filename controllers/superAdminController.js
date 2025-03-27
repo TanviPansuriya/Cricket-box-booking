@@ -43,11 +43,6 @@ exports.login = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, superAdmin.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid Credentials' });
-        // console.log(process.env.JWT_SECRET);
-
-        // const token = jwt.sign({ superAdmin: superAdmin._id }, process.env.JWT_SECRET, {
-        //     expiresIn: "1h",
-        // });
 
         res.json({ message: "Login successful" });
 
@@ -87,6 +82,7 @@ exports.createAdmin = async (req, res) => {
             html: `<h3>Hello, ${name}!</h3>
             <p>Your admin account has been created successfully.</p>
             <p>You can now log in using your registered email.</p>
+            <p>Your registered email :<b> ${email} </b></p>
             <p>Your account password :<b> ${password} </b></p>`,
         };
 
@@ -109,7 +105,7 @@ exports.deleteAdmin = async (req, res) => {
         res.status(200).json({ message: 'Admin removed successfully' });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Error removing admin', message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -130,7 +126,7 @@ exports.searchAdmin = async (req, res) => {
 
         res.status(200).json({ admins });
     } catch (error) {
-        res.status(500).json({ error: "Failed to filter admins", message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -140,7 +136,7 @@ exports.getContact = async (req, res) => {
         const contacts = await Contact.find();
         res.status(200).json(contacts);
     } catch (error) {
-        res.status(400).json({ error: 'Failed to fetch messages', message: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
 
