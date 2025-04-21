@@ -1,28 +1,6 @@
 const mongoose = require("mongoose");
 
 
-// /**
-//  * @swagger
-//  *  components:
-//  *    examples :
-//  *      booking :
-//  *          value :
-//  *            id : turfid
-//  *            userdetails :
-//  *               name : name,
-//  *               email : email,
-//  *               phone : phone,
-//  *            bookingDetails : 
-//  *               date : date,
-//  *               timeSlots : 
-//  *                   tartTime : startTime,
-//  *                   endTime : endTime,
-//  *                   price : price,
-//  *            status:status
-//  *       
-//  */
-
-
 /**
  * @swagger
  * components:

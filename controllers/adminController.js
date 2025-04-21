@@ -189,29 +189,66 @@ exports.searchTurfs = async (req, res) => {
     }
 };
 
-// Update a turf
-exports.updateTurf = async (req, res) => {
+function cleanEmptyFields(obj) {
+    Object.keys(obj).forEach(key => {
+      if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+        cleanEmptyFields(obj[key]);
+        if (Object.keys(obj[key]).length === 0) delete obj[key];
+      } else if (
+        obj[key] === "" || 
+        obj[key] === null || 
+        obj[key] === undefined
+      ) {
+        delete obj[key];
+      }
+    });
+  }
+  
+  exports.updateTurf = async (req, res) => {
     const _id = req.params.id;
     try {
-        let turf = await Turf.findById(_id);
-        if (!turf) {
-            return res.status(404).json({ error: 'Turf not found' });
-        }
-
-        const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : turf.images;
-
-        req.body.images = images; 
-
-        // if (req.file) {
-        //     req.body.image = req.file.path.replace(/\\/g, "/");
-        // }
-
-        turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
-        res.status(200).json({ message: 'Turf updated successfully', turf });
+      let turf = await Turf.findById(_id);
+      if (!turf) {
+        return res.status(404).json({ error: 'Turf not found' });
+      }
+  
+      const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : undefined;
+  
+      if (images) req.body.images = images;
+  
+      cleanEmptyFields(req.body);
+  
+      turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
+      res.status(200).json({ message: 'Turf updated successfully', turf });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+      res.status(400).json({ message: error.message });
     }
-};
+  };
+  
+
+// Update a turf
+// exports.updateTurf = async (req, res) => {
+//     const _id = req.params.id;
+//     try {
+//         let turf = await Turf.findById(_id);
+//         if (!turf) {
+//             return res.status(404).json({ error: 'Turf not found' });
+//         }
+
+//         const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : turf.images;
+
+//         req.body.images = images; 
+
+//         // if (req.file) {
+//         //     req.body.image = req.file.path.replace(/\\/g, "/");
+//         // }
+
+//         turf = await Turf.findByIdAndUpdate(_id, req.body, { new: true });
+//         res.status(200).json({ message: 'Turf updated successfully', turf });
+//     } catch (error) {
+//         res.status(400).json({ message: error.message });
+//     }
+// };
 
 // Update cloudinary images
 // exports.updateTurf = async (req, res) => {

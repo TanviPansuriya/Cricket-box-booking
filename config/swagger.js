@@ -7,8 +7,8 @@ const options = {
         },
         servers: [
             {
-                url: 'https://cricket-box-booking.onrender.com',
-                // url: 'http://localhost:3000',
+                // url: 'https://cricket-box-booking.onrender.com',
+                url: 'http://localhost:3000',
                 description: 'Development server',
             },
         ],
