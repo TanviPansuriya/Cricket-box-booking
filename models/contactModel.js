@@ -1,5 +1,25 @@
 const mongoose = require("mongoose");
 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Contact:
+ *       type: object
+ *       required: true
+ *       properties:
+ *         fullname:
+ *           type: string
+ *         email:
+ *           type: string
+ *         subject:
+ *           type: string
+ *         message:
+ *           type: string
+ */
+
+
 const contactSchema = new mongoose.Schema({
     fullname: {
         type: String,

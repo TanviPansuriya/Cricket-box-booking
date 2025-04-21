@@ -1,5 +1,24 @@
 const mongoose = require("mongoose");
 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     SuperAdmin:
+ *       type: object
+ *       required: true
+ *       properties:
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *       
+ */
+
+
 const SuperAdminSchema = new mongoose.Schema({
     name: {
         type: String,

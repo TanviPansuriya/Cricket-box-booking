@@ -27,27 +27,77 @@ exports.login = async (req, res) => {
     }
 };
 
+
 // Add turfs
+// exports.addTurf = async (req, res) => {
+//     const { name, location, address1, address2,
+//         city, landmark, zipcode, contactDetails, timeSlots } = req.body;
+
+//     const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
+//     try {
+//         const newTurf = new Turf({
+//             name, location, address1, address2,
+//             city, landmark, zipcode, contactDetails, timeSlots,
+//             admin: req.admin.admin,
+//             images
+//         });
+//         await newTurf.save();
+
+//         res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
 exports.addTurf = async (req, res) => {
-    const { name, location, address1, address2,
-        city, landmark, zipcode, contactDetails, timeSlots } = req.body;
-
-    const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
     try {
-        const newTurf = new Turf({
-            name, location, address1, address2,
-            city, landmark, zipcode, contactDetails, timeSlots,
-            admin: req.admin.admin,
-            images
-        });
-        await newTurf.save();
-
-        res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
+      const {
+        name,
+        address1,
+        address2,
+        city,
+        landmark,
+        zipcode,
+      } = req.body;
+  
+      let contactDetails, location, timeSlots;
+  
+      try {
+        contactDetails = JSON.parse(req.body.contactDetails);
+        location = JSON.parse(req.body.location);
+        timeSlots = JSON.parse(req.body.timeSlots);
+      } catch (parseErr) {
+        return res.status(400).json({ message: "Invalid JSON format in one of the fields (location, contactDetails, timeSlots)" });
+      }
+  
+      const images = req.files ? req.files.map(file => file.path.replace(/\\/g, "/")) : [];
+  
+      const newTurf = new Turf({
+        name,
+        address1,
+        address2,
+        city,
+        landmark,
+        zipcode,
+        contactDetails,
+        location,
+        timeSlots,
+        admin: req.admin.admin, // depends on your auth middleware
+        images,
+      });
+  
+      await newTurf.save();
+  
+      res.status(201).json({ message: 'Turf Added Successfully', turf: newTurf });
+  
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
+      console.error(error);
+      res.status(500).json({ message: error.message });
     }
-};
+  };
+  
+
 
 // Image upload on cloudinary
 // exports.addTurf = async (req, res) => {

@@ -16,9 +16,19 @@ app.use(cors());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/api/superAdmin', superAdminRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/user', userRoutes);
+
+const swaggerOptions = require("./config/swagger")
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+
+
+// bind swagger
+const specs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
+
+app.use('/superAdmin', superAdminRoutes);
+app.use('/admin', adminRoutes);
+app.use('/user', userRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running at ${port} no.`);

@@ -5,6 +5,8 @@ const SuperAdmin = require("../models/superAdminModel");
 const Admin = require("../models/adminModel");
 const Contact = require("../models/contactModel");
 
+require("dotenv").config();
+
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
