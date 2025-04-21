@@ -220,39 +220,80 @@ router.get('/turfs/:id', auth, getTurfById);
 
 router.get('/searchTurfs', auth, searchTurfs);
 
+
 // /**
 //  * @swagger
-//  * /admin/update-turf/{id}:
+//  * /update-turf/{id}:
 //  *   put:
-//  *     summary: Update turf
-//  *     tags: [Turfs]
+//  *     summary: Update turf details
+//  *     tags:
+//  *       - Turfs
 //  *     security:
 //  *       - jwt: []
 //  *     parameters:
-//  *       - in: path
-//  *         name: id
+//  *       - name: id
+//  *         in: path
 //  *         required: true
+//  *         description: Turf ID to update
 //  *         schema:
-//  *           type: string     
-//  *         description: Turf ID
+//  *           type: string
 //  *     requestBody:
 //  *       required: true
 //  *       content:
 //  *         multipart/form-data:
 //  *           schema:
-//  *              - $ref: '#/components/schemas/Turf'
+//  *             type: object
+//  *             properties:
+//  *               name:
+//  *                 type: string
+//  *               location.lat:
+//  *                 type: string
+//  *               location.lng:
+//  *                 type: string
+//  *               address1:
+//  *                 type: string
+//  *               address2:
+//  *                 type: string
+//  *               city:
+//  *                 type: string
+//  *               landmark:
+//  *                 type: string
+//  *               zipcode:
+//  *                 type: string
+//  *               contactDetails.phone:
+//  *                 type: string
+//  *               contactDetails.email:
+//  *                 type: string
+//  *               timeSlots:
+//  *                 type: array
+//  *                 items:
+//  *                   type: object
+//  *                   properties:
+//  *                     startTime:
+//  *                       type: string
+//  *                     endTime:
+//  *                       type: string
+//  *                     price:
+//  *                       type: string
+//  *               images:
+//  *                 type: array
+//  *                 items:
+//  *                   type: string
+//  *                   format: binary
 //  *     responses:
 //  *       200:
 //  *         description: Turf updated successfully
+//  *       400:
+//  *         description: Bad Request
 //  *       404:
 //  *         description: Turf not found
 //  */
 
 /**
  * @swagger
- * /update-turf/{id}:
+ * /admin/update-turf/{id}:
  *   put:
- *     summary: Update turf details
+ *     summary: Partially update turf details
  *     tags:
  *       - Turfs
  *     security:
@@ -265,7 +306,7 @@ router.get('/searchTurfs', auth, searchTurfs);
  *         schema:
  *           type: string
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -310,10 +351,10 @@ router.get('/searchTurfs', auth, searchTurfs);
  *     responses:
  *       200:
  *         description: Turf updated successfully
- *       400:
- *         description: Bad Request
  *       404:
  *         description: Turf not found
+ *       400:
+ *         description: Bad Request
  */
 
 

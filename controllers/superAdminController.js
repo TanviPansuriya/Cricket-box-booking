@@ -18,6 +18,10 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+console.log("Email user:", process.env.EMAIL_USER);
+console.log("Email pass length:", process.env.EMAIL_PASS?.length); // just length
+
+
 // Super Admin Registration
 exports.register = async (req, res) => {
     try {
