@@ -293,9 +293,9 @@ router.get('/searchTurfs', auth, searchTurfs);
  * @swagger
  * /admin/update-turf/{id}:
  *   patch:
- *     summary: update turf 
  *     tags:
  *       - Turfs
+ *     summary: update turf 
  *     security:
  *       - jwt: []
  *     parameters:
