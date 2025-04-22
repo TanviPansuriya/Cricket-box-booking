@@ -158,7 +158,7 @@ router.post('/create-admin', createAdmin);
  * /superAdmin/{id}:
  *   delete:
  *     tags: [Super Admin]
- *     summary: Delete an admin by ID
+ *     summary: Delete admin
  *     parameters:
  *       - in: path
  *         name: id

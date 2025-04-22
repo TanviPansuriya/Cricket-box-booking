@@ -293,7 +293,7 @@ router.get('/searchTurfs', auth, searchTurfs);
  * @swagger
  * /admin/update-turf/{id}:
  *   patch:
- *     summary: Partially update turf details
+ *     summary: update turf 
  *     tags:
  *       - Turfs
  *     security:
@@ -359,7 +359,6 @@ router.get('/searchTurfs', auth, searchTurfs);
 
 
 router.patch('/update-turf/:id', auth, upload.array('images', 5), updateTurf);
-
 
 /**
  * @swagger
