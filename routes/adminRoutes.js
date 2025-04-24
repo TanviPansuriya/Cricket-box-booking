@@ -295,7 +295,7 @@ router.get('/searchTurfs', auth, searchTurfs);
  *   patch:
  *     tags:
  *       - Turfs
- *     summary: update turf 
+ *     summary: update turf
  *     security:
  *       - jwt: []
  *     parameters:
